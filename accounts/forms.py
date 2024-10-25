@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.forms import ModelForm
+from django.forms import ModelForm, TextInput, NumberInput
 from .models import CustomUser, Schedule, Subject
 
 class CustomUserCreationForm(UserCreationForm):
@@ -12,12 +12,21 @@ class CustomUserChangeForm(UserChangeForm):
         model = CustomUser
         fields = ("username", "email","subjects","schedule","name")
 
-class AddSchedule(ModelForm):
+class ScheduleForm(ModelForm):
     class Meta:
         model = Schedule
         fields = ("start_time","end_time","day")
 
-class AddSubject(ModelForm):
+class SubjectForm(ModelForm):
     class Meta:
         model = Subject
         fields =("subject", "level")
+
+class AddSubjectForm(ModelForm):
+    class Meta:
+        model = Subject
+        fields = ['subject', 'level']
+        widgets = {
+            'subject': TextInput(attrs={'maxlength': 4}),  # Limit to 4 characters
+            'level': NumberInput(attrs={'min': 100, 'max': 999}),  # Limit to 3-digit integer
+        }

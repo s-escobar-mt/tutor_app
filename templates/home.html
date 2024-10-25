@@ -3,25 +3,42 @@
 {% block title %}Home{% endblock title %}
 
 {% block content %}
-{% if user.is_authenticated %}
-<p>Hi, {{ user.username }}!</p>
-<form action="{% url 'logout' %}" method="post">
-    {% csrf_token %}
-    <button type="submit">Log Out</button>
-</form>
-<form action="% url 'schedule' %" method="post">
-    <button type="submit">Add Hours</button>
-</form>
-{% else %}
-<p>You are not logged in</p>
-<a href="{% url 'login' %}">Log In</a> |
-<a href="{% url 'signup' %}">Sign Up</a>
-{% endif %}
-<br/>
-<h2>Tutors</h2>
-{% for tutor in object_list %}
-    <p>{{tutor.username}} <a href="{{tutor.get_absolute_url }}">{{tutor.username}}</a></p>
-{% endfor %}
-
+<div class="container mt-5">
+    {% if user.is_authenticated %}
+    <div class="alert">
+        <p>Hi, {{ user.username }}!</p>
+        <form action="{% url 'logout' %}" method="post" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Log Out</button>
+        </form>
+    </div>
+    {% else %}
+    <div class="alert alert-warning">
+        <p>You are not logged in</p>
+        <a href="{% url 'login' %}" class="btn btn-info">Log In</a>
+        <a href="{% url 'signup' %}" class="btn btn-success">Sign Up</a>
+    </div>
+    {% endif %}
+    
+    <h2>Tutors</h2>
+    <div class="row">
+        {% for tutor in object_list %}
+        <div class="col-md-4 mb-4"> <!-- Adjust the column size as needed -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ tutor.username }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ tutor.schedule.all.count }} Shifts</h6>
+                    <p class="card-text">
+                        {% for sch in tutor.schedule.all %}
+                            {{ sch.day }}: {{ sch.start_time|time:"h:i A" }} - {{ sch.end_time|time:"h:i A" }}<br>
+                        {% endfor %}
+                    </p>
+                    <a href="{{ tutor.get_absolute_url }}" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock content %}
 
